@@ -33,12 +33,24 @@ body {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+  transition: all 0.2s ease;
+}
+
+.column:hover {
+  background-color: #f4f5f7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .column-header {
   font-weight: bold;
   margin-bottom: 10px;
   font-size: 28px;
+  color: #172b4d;
+  transition: color 0.2s ease;
+}
+
+.column:hover .column-header {
+  color: #0079bf;
 }
 
 /* Cards Container */
@@ -61,12 +73,19 @@ body {
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: pre-wrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
 /* Card Hover Effects */
 .card:hover .delete-card,
 .card:hover .edit-card {
-  display: block;
+  display: flex;
 }
 
 /* Dragging Card Effects */
@@ -84,16 +103,35 @@ body {
   position: absolute;
   cursor: pointer;
   font-size: 18px;
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-weight: bold;
 }
 
 .delete-card {
   right: 8px;
   top: 8px;
+  color: #ff4444;
+}
+
+.delete-card:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+  color: #ff6666;
 }
 
 .edit-card {
   right: 31px;
   top: 8px;
+  color: #0079bf;
+}
+
+.edit-card:hover {
+  background-color: rgba(0, 121, 191, 0.1);
+  color: #00a8ff;
 }
 
 /* Add Card Button */
@@ -114,12 +152,25 @@ body {
 
 /* Drop Indicator */
 .drop-indicator {
-  background-color: #0079bf !important;
+  background: linear-gradient(90deg, #0079bf 0%, #00a8ff 100%) !important;
   border-radius: 2px;
   pointer-events: none;
   z-index: 999;
   position: absolute;
-  height: 4px;
+  height: 6px;
+  box-shadow: 0 0 8px rgba(0, 121, 191, 0.6);
+  animation: dropIndicatorPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dropIndicatorPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scaleY(1.2);
+  }
 }
 
 /* Responsive Design for Smaller Screens */
@@ -136,5 +187,6 @@ body {
   .drop-indicator {
     left: 10px !important;
     right: 10px !important;
+    height: 5px !important;
   }
 }
