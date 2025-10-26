@@ -23,5 +23,27 @@
       <div class="add-card">Add another card</div>
     </div>
   </div>
+
+  <!-- Modal Window -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Add Card</h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <textarea
+          class="modal-textarea"
+          id="modalTextarea"
+          placeholder="Enter card text..."
+          rows="4"
+        ></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-cancel" id="modalCancel">Cancel</button>
+        <button class="modal-btn modal-btn-save" id="modalSave">Save</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

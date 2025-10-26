@@ -7,6 +7,18 @@ class TrelloBoard {
       column2: [],
       column3: [],
     };
+
+    // Initialize modal elements
+    this.modalOverlay = document.getElementById("modalOverlay");
+    this.modalTitle = document.getElementById("modalTitle");
+    this.modalTextarea = document.getElementById("modalTextarea");
+    this.modalSave = document.getElementById("modalSave");
+    this.modalCancel = document.getElementById("modalCancel");
+    this.modalClose = document.getElementById("modalClose");
+
+    this.modalSaveCallback = null;
+
+    this.initModalListeners();
     this.renderCards();
     this.addCardListeners();
     this.initDragAndDrop();
@@ -58,13 +70,14 @@ class TrelloBoard {
   addCardListeners() {
     document.querySelectorAll(".add-card").forEach((addCardButton) => {
       addCardButton.addEventListener("click", () => {
-        const columnId = addCardButton.parentElement.id;
-        const cardText = prompt("Enter card text:");
-        if (cardText) {
-          this.state[columnId].push(cardText);
-          this.saveState();
-          this.renderCards();
-        }
+        this.showModal("Add Card", "", (text) => {
+          if (text.trim()) {
+            const columnId = addCardButton.parentElement.id;
+            this.state[columnId].push(text.trim());
+            this.saveState();
+            this.renderCards();
+          }
+        });
       });
     });
   }
@@ -76,11 +89,87 @@ class TrelloBoard {
   }
 
   editCard(columnId, index) {
-    const newText = prompt("Edit card text:", this.state[columnId][index]);
-    if (newText !== null) {
-      this.state[columnId][index] = newText;
-      this.renderCards();
+    const currentText = this.state[columnId][index];
+    this.showModal("Edit Card", currentText, (newText) => {
+      if (newText !== null && newText.trim()) {
+        this.state[columnId][index] = newText.trim();
+        this.saveState();
+        this.renderCards();
+      }
+    });
+  }
+
+  showModal = (title, initialText, onSave) => {
+    this.modalTitle.textContent = title;
+    this.modalTextarea.value = initialText;
+    this.modalSaveCallback = onSave;
+    this.modalOverlay.classList.add("active");
+    this.modalTextarea.focus();
+    this.modalTextarea.select();
+  };
+
+  hideModal = () => {
+    this.modalOverlay.classList.remove("active");
+    this.modalSaveCallback = null;
+    this.modalTextarea.value = "";
+  };
+
+  validateAndSave = () => {
+    const text = this.modalTextarea.value.trim();
+    if (text) {
+      if (this.modalSaveCallback) {
+        this.modalSaveCallback(text);
+      }
+      this.hideModal();
+    } else {
+      this.modalTextarea.focus();
+      this.modalTextarea.style.borderColor = "#ff4444";
+      setTimeout(() => {
+        this.modalTextarea.style.borderColor = "";
+      }, 2000);
     }
+  };
+
+  initModalListeners() {
+    // Save button
+    this.modalSave.addEventListener("click", () => {
+      this.validateAndSave();
+    });
+
+    // Cancel button
+    this.modalCancel.addEventListener("click", () => {
+      this.hideModal();
+    });
+
+    // Close button (X)
+    this.modalClose.addEventListener("click", () => {
+      this.hideModal();
+    });
+
+    // Overlay click (close on background click)
+    this.modalOverlay.addEventListener("click", (e) => {
+      if (e.target === this.modalOverlay) {
+        this.hideModal();
+      }
+    });
+
+    // Escape key
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "Escape" &&
+        this.modalOverlay.classList.contains("active")
+      ) {
+        this.hideModal();
+      }
+    });
+
+    // Ctrl+Enter / Cmd+Enter to save
+    this.modalTextarea.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        this.validateAndSave();
+      }
+    });
   }
 
   dragStart(e) {
